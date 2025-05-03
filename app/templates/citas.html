@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Citas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Citas del Día</h2>
+        <div class="list-group">
+            {% for cita in citas %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ cita.cliente.nombre }} {{ cita.cliente.apellido }}</h5>
+                        <p class="mb-1">{{ cita.fecha.strftime('%H:%M') }}</p>
+                        <p class="mb-1">{{ cita.descripcion }}</p>
+                        <span class="badge bg-{{ 'success' if cita.estado == 'completada' else 'danger' if cita.estado == 'cancelada' else 'primary' }}">
+                            {{ cita.estado }}
+                        </span>
+                    </div>
+                    {% if cita.estado == 'pendiente' %}
+                    <div class="cita-acciones">
+                        <form method="POST" action="{{ url_for('main.completar_cita', id=cita.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-link text-success" title="Marcar como completada">
+                                <i class="bi bi-check-circle"></i>
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('main.cancelar_cita', id=cita.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-link text-danger" title="Marcar como cancelada">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No hay citas programadas para hoy.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <h2>Agendar Nueva Cita</h2>
+        <form method="POST" action="{{ url_for('main.nueva_cita') }}">
+            <div class="mb-3">
+                <label for="cliente_id" class="form-label">Cliente</label>
+                <select class="form-select" id="cliente_id" name="cliente_id" required>
+                    <option value="">Seleccionar cliente</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellido }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha y Hora</label>
+                <input type="datetime-local" class="form-control" id="fecha" name="fecha" required>
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Agendar Cita</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

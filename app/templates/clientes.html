@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Lista de Clientes</h2>
+            <form class="d-flex" method="GET" action="{{ url_for('main.clientes') }}">
+                <input type="text" class="form-control me-2" name="busqueda" placeholder="Buscar por nombre o apellido" value="{{ busqueda }}">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Citas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td><a href="{{ url_for('main.cliente_detalle', id=cliente.id) }}">{{ cliente.nombre }}</a></td>
+                        <td>{{ cliente.apellido }}</td>
+                        <td>{{ cliente.telefono }}</td>
+                        <td>{{ cliente.citas|length }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No hay clientes registrados</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <h2>Agregar Nuevo Cliente</h2>
+        <form method="POST" action="{{ url_for('main.nuevo_cliente') }}">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="telefono" name="telefono">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Cliente</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 
